@@ -10,7 +10,7 @@ const {dbConnection} = require("./config/config")
 app.use(express.json())
 
 app.use("/users", require("./routes/users"))
-
+app.use("/massages", require("./routes/massages"))
 
 
 dbConnection()

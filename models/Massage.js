@@ -8,7 +8,7 @@ const MassageSchema = new mongoose.Schema({
     category: { type: String }, 
     image: String,
 
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: String, default: "Matthijs" },
 
     reviews: [{
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
