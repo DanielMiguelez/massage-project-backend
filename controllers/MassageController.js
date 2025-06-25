@@ -48,6 +48,19 @@ const MassageController = {
             console.log("Not able to bring massage:", error);
         }
     },
+
+    async updateMassageById(req, res){
+        try{
+            const massageToUpdate = await Massage.findByIdAndUpdate(req.params._id, req.body, { new: true });
+
+            if(!massageToUpdate){
+                return res.status(400).send("There is no massage to update")
+            }
+            res.status(200).send({ msg: "Your massage updated", massage: massageToUpdate });
+        }catch(error){
+            console.log("Not able to update massage:", error);
+        }
+    }
 }
 
 module.exports = MassageController;

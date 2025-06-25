@@ -7,5 +7,6 @@ router.post("/createMassage", MassageController.createMassage)
 router.get("/getAllMassages", MassageController.getAllMassages)
 router.get("/getMassageById/:_id", MassageController.getMassageById)
 router.delete("/deleteMassageById/:_id", MassageController.deleteMassageById)
+router.put("/updateMassageById/:_id", MassageController.updateMassageById)
 
 module.exports = router;
