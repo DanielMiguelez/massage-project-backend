@@ -29,6 +29,33 @@ const UserController = {
         } catch (error) {
             console.log("Not able to bring user:", error);
         }
+    },
+
+    async deleteUserById(req, res){
+        try {
+            const userToDelete = await User.findByIdAndDelete(req.params._id);
+
+            if (!userToDelete) {
+                return res.status(400).send("your user does not exist")
+            }
+
+            res.status(200).send({ msg: "user deleted", id: req.params._id })
+        } catch (error) {
+            console.log("Not able to bring user:", error);
+        }
+    },
+
+    async updateUserById(req, res){
+        try{
+            const userToUpdate = await User.findByIdAndUpdate(req.params._id, req.body, { new: true });
+
+            if(!userToUpdate){
+                return res.status(400).send("There is no user to update")
+            }
+            res.status(200).send({ msg: "Your user updated", user: userToUpdate });
+        }catch(error){
+            console.log("Not able to update user:", error);
+        }
     }
 }
 
