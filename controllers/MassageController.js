@@ -11,6 +11,43 @@ const MassageController = {
             res.status(500).send({ msg: "Error creating massage", error });
         }
     },
+
+    async getAllMassages(req, res){
+        try {
+            const massages = await Massage.find();
+
+            if(!massages){
+                res.status(400).send({msg:"There are no massages", massages})
+            }
+
+            res.status(200).send({msg:"Here are all the massages", massages})
+        } catch (error) {
+            console.log("Not able to get massages:", error);
+            res.status(500).send({ msg: "Error getting massages", error });
+        }
+    },
+    async getMassageById(req, res){
+        try {
+            const MassageById = await Massage.findById(req.params._id);
+            res.status(201).send({msg:"Massage by the ID you selected" , MassageById})
+        } catch (error) {
+            console.log("Not able to bring the massage:", error);
+        }
+    },
+
+    async deleteMassageById(req, res){
+        try {
+            const massageToDelete = await Massage.findByIdAndDelete(req.params._id);
+
+            if (!massageToDelete) {
+                return res.status(400).send("your massage does not exist")
+            }
+
+            res.status(200).send({ msg: "massage deleted", id: req.params._id })
+        } catch (error) {
+            console.log("Not able to bring massage:", error);
+        }
+    },
 }
 
 module.exports = MassageController;
