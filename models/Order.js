@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     massageId: { type: mongoose.Schema.Types.ObjectId, ref: 'Massage', required: true },
     scheduledDate: { type: Date, required: true },
     locationType: { type: String, enum: ['local', 'domicilio'], required: true },
