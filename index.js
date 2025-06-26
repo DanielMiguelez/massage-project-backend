@@ -11,7 +11,7 @@ app.use(express.json())
 
 app.use("/users", require("./routes/users"))
 app.use("/massages", require("./routes/massages"))
-
+app.use("/orders", require("./routes/orders"))
 
 dbConnection()
 
