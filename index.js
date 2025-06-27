@@ -13,6 +13,7 @@ app.use("/users", require("./routes/users"))
 app.use("/massages", require("./routes/massages"))
 app.use("/orders", require("./routes/orders"))
 app.use("/reviews", require("./routes/reviews"))
+app.use("/payments", require("./routes/payments"));
 
 dbConnection()
 

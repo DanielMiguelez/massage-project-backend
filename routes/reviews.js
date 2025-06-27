@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const ReviewController = require("../controllers/ReviewController");
-const { authentication } = require("../middlewares/authentication");
+const { authentication, isAdmin } = require("../middlewares/authentication");
 
 router.post("/createReview", authentication, ReviewController.createReview);
 router.get("/getAllReviews", ReviewController.getAllReviews);
-router.delete("/deleteReview/:id", authentication, ReviewController.deleteReview);
+router.delete("/deleteReview/:id", authentication, isAdmin,  ReviewController.deleteReview);
 
 module.exports = router;
