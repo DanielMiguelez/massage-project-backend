@@ -6,5 +6,6 @@ const { authentication } = require("../middlewares/authentication");
 
 router.post("/createReview", authentication, ReviewController.createReview);
 router.get("/getAllReviews", ReviewController.getAllReviews);
+router.delete("/deleteReview/:id", authentication, ReviewController.deleteReview);
 
 module.exports = router;

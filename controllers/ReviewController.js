@@ -27,6 +27,16 @@ const ReviewController = {
         } catch (error) {
             res.status(500).send({ msg: "Error getting reviews", error });
         }
+    },
+
+    async deleteReview(req, res) {
+        try {
+            const { id } = req.params;
+            await Review.findByIdAndDelete(id);
+            res.status(200).send({ msg: "Review deleted successfully" });
+        } catch (error) {
+            res.status(500).send({ msg: "Error deleting review", error });
+        }
     }
 }
 
