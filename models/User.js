@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const ObjectId = mongoose.SchemaTypes.ObjectId;
+const nodemailer = require("nodemailer");
 
 const UserSchema = new mongoose.Schema({
 
@@ -9,6 +10,8 @@ const UserSchema = new mongoose.Schema({
     phone: { type: String },
     address: { type: String },
     role: { type: String, enum: ['user', 'admin', 'masajista'], default: 'user' },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 
     purchases: [{
         massageId: {type: ObjectId, ref: 'Massage' },
@@ -25,5 +28,6 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const User = mongoose.model('User', UserSchema)
+
 
 module.exports = User;
