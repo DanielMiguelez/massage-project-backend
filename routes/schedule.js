@@ -6,5 +6,7 @@ const { authentication, isAdmin } = require("../middlewares/authentication");
 
 // Ruta para crear/actualizar horarios (solo admin/masajista)
 router.post("/create", authentication, isAdmin, ScheduleController.createOrUpdateSchedule);
+router.get("/available", ScheduleController.getAvailableSchedules);
+router.post("/check-availability", ScheduleController.checkAvailability);
 
 module.exports = router; 

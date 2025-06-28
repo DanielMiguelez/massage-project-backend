@@ -11,8 +11,17 @@ const ScheduleSchema = new mongoose.Schema({
       orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', default: null }
     }
   ],
-  isBlocked: { type: Boolean, default: false }, // Para bloquear el día completo
+  isBlocked: { type: Boolean, default: false }, 
   notes: String
 }, { timestamps: true });
- 
+
+
+ScheduleSchema.methods.isTimeSlotAvailable = function(startTime, endTime) {
+  const slot = this.timeSlots.find(slot => 
+    slot.startTime === startTime && 
+    slot.endTime === endTime
+  );
+  return slot && slot.isAvailable;
+};
+
 module.exports = mongoose.model('Schedule', ScheduleSchema);
