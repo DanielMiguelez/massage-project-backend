@@ -10,7 +10,9 @@ router.get("/getUserById/:_id", UserController.getUserById)
 router.delete("/deleteUserById/:_id", UserController.deleteUserById)
 router.put("/updateUserById/:_id", UserController.updateUserById)
 router.post("/login", UserController.login);
+router.delete("/logout", authentication, UserController.logout);
 router.post("/forgotPassword", UserController.forgotPassword);
 router.post("/resetPassword", UserController.resetPassword);
+router.get("/getProfile", authentication, UserController.getProfile)
 
 module.exports = router; 

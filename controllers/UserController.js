@@ -149,7 +149,40 @@ const UserController = {
             console.log("Reset password error:", error);
             res.status(500).send({ msg: "Error in reset password", error });
         }
-    }
+    },
+
+    async getProfile(req, res) {
+        try {
+            const user = await User.findById(req.user._id)
+                .populate("purchases.massageId", "title price")
+                .populate("reviews.massageId", "title")
+                .select("-password");
+
+            if (!user) {
+                return res.status(404).send({ msg: "User not found" });
+            }
+            
+            res.status(200).send({ 
+                msg: "Profile retrieved successfully", 
+                user 
+            });
+        } catch (error) {
+            console.error("Error getting profile:", error);
+            res.status(500).send({ msg: "Error retrieving profile" });
+        }
+    },
+
+    async logout(req, res) {
+        try {
+            res.status(200).send({ 
+                msg: "Logout successful",
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            console.error("Error during logout:", error);
+            res.status(500).send({ msg: "Error during logout" });
+        }
+    },
 
 }
 
