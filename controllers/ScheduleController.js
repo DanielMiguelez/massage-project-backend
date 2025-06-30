@@ -52,7 +52,7 @@ const ScheduleController = {
 
     async getAvailableSchedules(req, res) {
         try {
-            const { startDate, endDate, masajistaId } = req.query;
+            const { startDate, endDate, masajistaId, includeBlocked } = req.query;
 
             let query = {};
 
@@ -73,20 +73,33 @@ const ScheduleController = {
                 .populate('masajistaId', 'name email') // Incluir datos del masajista
                 .sort({ date: 1 });
 
-            // Filtrar solo los slots disponibles
-            const availableSchedules = schedules.map(schedule => {
-                const availableSlots = schedule.timeSlots.filter(slot => slot.isAvailable);
-                return {
-                    ...schedule.toObject(),
-                    timeSlots: availableSlots
-                };
-            }).filter(schedule =>
-                schedule.timeSlots.length > 0 && !schedule.isBlocked
-            );
+            let processedSchedules;
+
+            if (includeBlocked === 'true') {
+                // Mostrar todos los horarios (incluyendo bloqueados)
+                processedSchedules = schedules.map(schedule => {
+                    const availableSlots = schedule.timeSlots.filter(slot => slot.isAvailable);
+                    return {
+                        ...schedule.toObject(),
+                        timeSlots: availableSlots
+                    };
+                });
+            } else {
+                // Mostrar solo horarios disponibles (comportamiento original)
+                processedSchedules = schedules.map(schedule => {
+                    const availableSlots = schedule.timeSlots.filter(slot => slot.isAvailable);
+                    return {
+                        ...schedule.toObject(),
+                        timeSlots: availableSlots
+                    };
+                }).filter(schedule =>
+                    schedule.timeSlots.length > 0 && !schedule.isBlocked
+                );
+            }
 
             res.status(200).send({
-                msg: "Available schedules",
-                schedules: availableSchedules
+                msg: includeBlocked === 'true' ? "All schedules" : "Available schedules",
+                schedules: processedSchedules
             });
         } catch (error) {
             console.log("Error getting schedules:", error);
@@ -150,6 +163,100 @@ const ScheduleController = {
             console.log("Error checking availability:", error);
             res.status(500).send({
                 msg: "Error checking availability",
+                error: error.message
+            });
+        }
+    },
+
+    async blockDay(req, res) {
+        try {
+            const { date, notes } = req.body;
+            const masajistaId = req.user._id;
+
+            const scheduleDate = new Date(date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (scheduleDate < today) {
+                return res.status(400).send({ 
+                    msg: "Cannot block past dates" 
+                });
+            }
+
+            let schedule = await Schedule.findOne({ 
+                date: scheduleDate,
+                masajistaId: masajistaId
+            });
+
+            if (schedule) {
+                schedule.isBlocked = true;
+                schedule.timeSlots = []; // Limpiar todos los slots
+                schedule.notes = notes || schedule.notes;
+                await schedule.save();
+            } else {
+                schedule = await Schedule.create({
+                    masajistaId: masajistaId,
+                    date: scheduleDate,
+                    timeSlots: [],
+                    isBlocked: true,
+                    notes
+                });
+            }
+
+            res.status(200).send({ 
+                msg: "Day blocked successfully", 
+                schedule 
+            });
+        } catch (error) {
+            console.log("Error blocking day:", error);
+            res.status(500).send({ 
+                msg: "Error blocking day", 
+                error: error.message 
+            });
+        }
+    },
+
+    async unblockDay(req, res) {
+        try {
+            const { date, timeSlots, notes } = req.body;
+            const masajistaId = req.user._id;
+
+            const scheduleDate = new Date(date);
+
+            // Buscar si ya existe un horario para esa fecha y masajista
+            let schedule = await Schedule.findOne({
+                date: scheduleDate,
+                masajistaId: masajistaId
+            });
+
+            if (schedule) {
+                schedule.isBlocked = false;
+                if (Array.isArray(timeSlots)) {
+                    schedule.timeSlots = timeSlots;
+                }
+                if (notes) {
+                    schedule.notes = notes;
+                }
+                await schedule.save();
+            } else {
+                // Crear nuevo horario desbloqueado
+                schedule = await Schedule.create({
+                    masajistaId: masajistaId,
+                    date: scheduleDate,
+                    timeSlots: timeSlots || [],
+                    isBlocked: false,
+                    notes
+                });
+            }
+
+            res.status(200).send({
+                msg: "Day unblocked successfully",
+                schedule
+            });
+        } catch (error) {
+            console.log("Error unblocking day:", error);
+            res.status(500).send({
+                msg: "Error unblocking day",
                 error: error.message
             });
         }

@@ -8,5 +8,7 @@ const { authentication, isAdmin } = require("../middlewares/authentication");
 router.post("/create", authentication, isAdmin, ScheduleController.createOrUpdateSchedule);
 router.get("/available", ScheduleController.getAvailableSchedules);
 router.post("/check-availability", ScheduleController.checkAvailability);
+router.post("/block-day", authentication, isAdmin, ScheduleController.blockDay);
+router.post("/unblock-day", authentication, isAdmin, ScheduleController.unblockDay);
 
 module.exports = router; 

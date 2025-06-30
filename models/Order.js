@@ -10,7 +10,9 @@ const OrderSchema = new mongoose.Schema({
     locationType: { type: String, enum: ['local', 'domicilio'], required: true },
     address: String,
     status: { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled'], default: 'pending' },
-    totalPrice: Number
+    totalPrice: Number,
+    paymentIntentId: { type: String },
+    paymentStatus: { type: String, enum: ['pending', 'succeeded', 'failed'], default: 'pending' }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", OrderSchema);
