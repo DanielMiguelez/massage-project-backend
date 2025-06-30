@@ -56,7 +56,6 @@ const ScheduleController = {
 
             let query = {};
 
-            // Filtrar por rango de fechas si se proporcionan
             if (startDate && endDate) {
                 query.date = {
                     $gte: new Date(startDate),
@@ -64,19 +63,17 @@ const ScheduleController = {
                 };
             }
 
-            // Filtrar por masajista específico si se proporciona
             if (masajistaId) {
                 query.masajistaId = masajistaId;
             }
 
             const schedules = await Schedule.find(query)
-                .populate('masajistaId', 'name email') // Incluir datos del masajista
+                .populate('masajistaId', 'name email')
                 .sort({ date: 1 });
 
             let processedSchedules;
 
             if (includeBlocked === 'true') {
-                // Mostrar todos los horarios (incluyendo bloqueados)
                 processedSchedules = schedules.map(schedule => {
                     const availableSlots = schedule.timeSlots.filter(slot => slot.isAvailable);
                     return {
@@ -85,7 +82,6 @@ const ScheduleController = {
                     };
                 });
             } else {
-                // Mostrar solo horarios disponibles (comportamiento original)
                 processedSchedules = schedules.map(schedule => {
                     const availableSlots = schedule.timeSlots.filter(slot => slot.isAvailable);
                     return {
@@ -124,7 +120,6 @@ const ScheduleController = {
             const scheduleDate = new Date(date);
             let query = { date: scheduleDate };
             
-            // Si se proporciona masajistaId, filtrar por él
             if (masajistaId) {
                 query.masajistaId = masajistaId;
             }
@@ -190,7 +185,7 @@ const ScheduleController = {
 
             if (schedule) {
                 schedule.isBlocked = true;
-                schedule.timeSlots = []; // Limpiar todos los slots
+                schedule.timeSlots = []; 
                 schedule.notes = notes || schedule.notes;
                 await schedule.save();
             } else {
@@ -223,7 +218,6 @@ const ScheduleController = {
 
             const scheduleDate = new Date(date);
 
-            // Buscar si ya existe un horario para esa fecha y masajista
             let schedule = await Schedule.findOne({
                 date: scheduleDate,
                 masajistaId: masajistaId
@@ -239,7 +233,6 @@ const ScheduleController = {
                 }
                 await schedule.save();
             } else {
-                // Crear nuevo horario desbloqueado
                 schedule = await Schedule.create({
                     masajistaId: masajistaId,
                     date: scheduleDate,
