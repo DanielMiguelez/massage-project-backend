@@ -12,5 +12,6 @@ router.delete("/deleteOrderById/:_id", authentication, OrderController.deleteOrd
 router.get("/getOrdersByUser/:userId", authentication, OrderController.getOrdersByUser)
 router.get("/getOrdersByGuest", OrderController.getOrdersByGuest);
 router.get("/myOrders", authentication, OrderController.getMyOrders);
+router.post('/cancelOrder', authentication, OrderController.cancelOrder);
 
 module.exports = router;

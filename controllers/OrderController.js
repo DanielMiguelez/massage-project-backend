@@ -1,6 +1,7 @@
 const Massage = require("../models/Massage")
 const User = require("../models/User")
 const Order = require("../models/Order")
+const PaymentController = require("./PaymentController")
 
 const OrderController = {
     async createOrder(req, res) {
@@ -124,6 +125,10 @@ const OrderController = {
             console.log("Not able to get your orders:", error);
             res.status(500).send({ msg: "Error getting your orders", error });
         }
+    },
+
+    async cancelOrder(req, res) {
+        return PaymentController.cancelOrder(req, res);
     }
 };
 
